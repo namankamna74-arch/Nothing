@@ -12,6 +12,7 @@ export const PHILOSOPHERS: Philosopher[] = [
     textColor: "text-blue-500",
     bio: "An Athenian philosopher during the Classical period in Ancient Greece, Plato founded the Platonist school of thought and the Academy, the first institution of higher learning in the Western world. His work explores justice, beauty, equality, political philosophy, and the nature of reality.",
     majorWorks: ["The Republic", "Apology", "Phaedo", "Symposium", "Meno"],
+    iconCategory: 'ancient',
   },
   {
     id: 'socrates',
@@ -22,6 +23,7 @@ export const PHILOSOPHERS: Philosopher[] = [
     textColor: "text-stone-500",
     bio: "A classical Greek (Athenian) philosopher credited as one of the founders of Western philosophy. He is an enigmatic figure known chiefly through the accounts of later classical writers, especially the writings of his students Plato and Xenophon. His method of questioning is his most enduring legacy.",
     majorWorks: ["No known writings. His philosophy is documented by Plato and others."],
+    iconCategory: 'ancient',
   },
   {
     id: 'aristotle',
@@ -32,6 +34,7 @@ export const PHILOSOPHERS: Philosopher[] = [
     textColor: "text-teal-500",
     bio: "A Greek philosopher and polymath during the Classical period in Ancient Greece. A student of Plato, he was the founder of the Lyceum, the Peripatetic school of philosophy, and the Aristotelian tradition. His writings cover many subjects including physics, biology, zoology, metaphysics, logic, ethics, aesthetics, poetry, theatre, music, rhetoric, psychology, linguistics, economics, politics, and government.",
     majorWorks: ["Nicomachean Ethics", "Politics", "Metaphysics", "Poetics", "Prior Analytics"],
+    iconCategory: 'ancient',
   },
   {
     id: 'nietzsche',
@@ -42,6 +45,7 @@ export const PHILOSOPHERS: Philosopher[] = [
     textColor: "text-red-700",
     bio: "A German philosopher, cultural critic, composer, poet, and philologist whose work has exerted a profound influence on modern intellectual history. He began his career as a classical philologist before turning to philosophy. His work critiques religion, morality, contemporary culture, philosophy, and science, displaying a fondness for metaphor and irony.",
     majorWorks: ["Thus Spoke Zarathustra", "Beyond Good and Evil", "On the Genealogy of Morality", "The Will to Power"],
+    iconCategory: 'existentialism',
   },
   {
     id: 'kant',
@@ -52,6 +56,7 @@ export const PHILOSOPHERS: Philosopher[] = [
     textColor: 'text-slate-500',
     bio: 'A German philosopher and one of the central Enlightenment thinkers. Kant\'s comprehensive and systematic works in epistemology, metaphysics, ethics, and aesthetics have made him one of the most influential figures in modern Western philosophy.',
     majorWorks: ['Critique of Pure Reason', 'Groundwork of the Metaphysic of Morals', 'Critique of Practical Reason'],
+    iconCategory: 'rationalism',
   },
   {
     id: 'simone_de_beauvoir',
@@ -62,6 +67,7 @@ export const PHILOSOPHERS: Philosopher[] = [
     textColor: "text-pink-500",
     bio: "A French writer, intellectual, existentialist philosopher, political activist, feminist, and social theorist. Though she did not consider herself a philosopher, she had a significant influence on both feminist existentialism and feminist theory.",
     majorWorks: ["The Second Sex", "The Mandarins", "She Came to Stay", "Memoirs of a Dutiful Daughter"],
+    iconCategory: 'existentialism',
   },
   {
     id: 'sartre',
@@ -72,6 +78,7 @@ export const PHILOSOPHERS: Philosopher[] = [
     textColor: "text-indigo-500",
     bio: "A French philosopher, playwright, novelist, political activist, biographer, and literary critic. He was one of the key figures in the philosophy of existentialism and phenomenology, and one of the leading figures in 20th-century French philosophy and Marxism.",
     majorWorks: ["Being and Nothingness", "Nausea", "No Exit", "Existentialism Is a Humanism"],
+    iconCategory: 'existentialism',
   },
   {
     id: 'camus',
@@ -82,6 +89,7 @@ export const PHILOSOPHERS: Philosopher[] = [
     textColor: "text-yellow-600",
     bio: "A French philosopher, author, and journalist. He was awarded the 1957 Nobel Prize in Literature at the age of 44, the second-youngest recipient in history. His works include The Stranger, The Plague, The Myth of Sisyphus, The Fall, and The Rebel. He was a key figure in the rise of absurdism.",
     majorWorks: ["The Stranger", "The Plague", "The Myth of Sisyphus", "The Fall", "The Rebel"],
+    iconCategory: 'existentialism',
   },
   {
     id: 'marcus_aurelius',
@@ -92,6 +100,7 @@ export const PHILOSOPHERS: Philosopher[] = [
     textColor: "text-amber-600",
     bio: "A Roman emperor from 161 to 180 and a Stoic philosopher. He was the last of the rulers known as the Five Good Emperors. His personal philosophical writings, later titled 'Meditations', are a significant source of the modern understanding of ancient Stoic philosophy.",
     majorWorks: ["Meditations"],
+    iconCategory: 'stoicism',
   },
   {
     id: 'seneca',
@@ -102,6 +111,7 @@ export const PHILOSOPHERS: Philosopher[] = [
     textColor: 'text-orange-600',
     bio: 'A Roman Stoic philosopher, statesman, dramatist, and in one work, satirist, from the Silver Age of Latin literature. He was a tutor and later advisor to emperor Nero.',
     majorWorks: ['Letters from a Stoic', 'On the Shortness of Life', 'Medea', 'Thyestes'],
+    iconCategory: 'stoicism',
   },
   {
     id: 'descartes',
@@ -112,6 +122,7 @@ export const PHILOSOPHERS: Philosopher[] = [
     textColor: "text-sky-500",
     bio: "A French philosopher, mathematician, and scientist. Dubbed the father of modern Western philosophy, much of subsequent Western philosophy is a response to his writings, which are studied closely to this day. His Meditations on First Philosophy continues to be a standard text at most university philosophy departments.",
     majorWorks: ["Meditations on First Philosophy", "Discourse on the Method", "Principles of Philosophy"],
+    iconCategory: 'rationalism',
   },
   {
     id: 'john_locke',
@@ -122,6 +133,7 @@ export const PHILOSOPHERS: Philosopher[] = [
     textColor: 'text-cyan-500',
     bio: 'An English philosopher and physician, widely regarded as one of the most influential of Enlightenment thinkers and commonly known as the "Father of Liberalism".',
     majorWorks: ['Two Treatises of Government', 'An Essay Concerning Human Understanding', 'A Letter Concerning Toleration'],
+    iconCategory: 'empiricism',
   },
   {
     id: 'machiavelli',
@@ -132,6 +144,7 @@ export const PHILOSOPHERS: Philosopher[] = [
     textColor: "text-gray-400",
     bio: "An Italian diplomat, politician, historian, philosopher, writer, playwright and poet of the Renaissance period. He has often been called the father of modern political philosophy and political science. His most famous work, The Prince, offers a brutally realistic guide to wielding power.",
     majorWorks: ["The Prince", "Discourses on Livy", "The Art of War"],
+    iconCategory: 'political',
   },
   {
     id: 'kierkegaard',
@@ -142,6 +155,7 @@ export const PHILOSOPHERS: Philosopher[] = [
     textColor: "text-green-600",
     bio: "A Danish philosopher, theologian, poet, social critic, and religious author who is widely considered to be the first existentialist philosopher. He wrote critical texts on organized religion, Christendom, morality, ethics, psychology, and the philosophy of religion, displaying a fondness for metaphor, irony, and parables.",
     majorWorks: ["Fear and Trembling", "Either/Or", "The Sickness Unto Death", "The Concept of Anxiety"],
+    iconCategory: 'existentialism',
   },
   {
     id: 'confucius',
@@ -152,6 +166,7 @@ export const PHILOSOPHERS: Philosopher[] = [
     textColor: "text-yellow-600",
     bio: "A Chinese philosopher and politician of the Spring and Autumn period. The philosophy of Confucius, also known as Confucianism, emphasized personal and governmental morality, correctness of social relationships, justice, kindness, and sincerity. His teachings and philosophy form the basis of much of East Asian culture and society.",
     majorWorks: ["The Analects (compiled by his disciples)"],
+    iconCategory: 'eastern',
   },
   {
     id: 'sun_tzu',
@@ -162,6 +177,7 @@ export const PHILOSOPHERS: Philosopher[] = [
     textColor: "text-red-700",
     bio: "A Chinese general, strategist, and philosopher who is traditionally credited as the author of The Art of War. Sun Tzu is revered in Chinese and East Asian culture as a legendary historical and military figure. His work has been influential on both Western and East Asian philosophy and military thinking.",
     majorWorks: ["The Art of War"],
+    iconCategory: 'eastern',
   },
   {
     id: 'wollstonecraft',
@@ -172,6 +188,7 @@ export const PHILOSOPHERS: Philosopher[] = [
     textColor: 'text-rose-500',
     bio: 'An English writer, philosopher, and advocate of women\'s rights. Until the late 20th century, Wollstonecraft\'s life, which encompassed several unconventional personal relationships, received more attention than her writing. Today Wollstonecraft is regarded as one of the founding feminist philosophers.',
     majorWorks: ['A Vindication of the Rights of Woman', 'Thoughts on the Education of Daughters', 'Maria: or, The Wrongs of Woman'],
+    iconCategory: 'political',
   },
   {
     id: 'dostoevsky',
@@ -182,6 +199,7 @@ export const PHILOSOPHERS: Philosopher[] = [
     textColor: "text-purple-500",
     bio: "A Russian novelist, short story writer, essayist, and journalist. Dostoevsky's literary works explore human psychology in the troubled political, social, and spiritual atmospheres of 19th-century Russia, and engage with a variety of philosophical and religious themes.",
     majorWorks: ["Crime and Punishment", "The Brothers Karamazov", "Notes from Underground", "The Idiot"],
+    iconCategory: 'literary',
   },
   {
     id: 'kafka',
@@ -192,6 +210,7 @@ export const PHILOSOPHERS: Philosopher[] = [
     textColor: "text-gray-500",
     bio: "A German-speaking Bohemian novelist and short-story writer, widely regarded as one of the major figures of 20th-century literature. His work fuses elements of realism and the fantastic. It typically features isolated protagonists facing bizarre or surrealistic predicaments and incomprehensible socio-bureaucratic powers.",
     majorWorks: ["The Metamorphosis", "The Trial", "The Castle"],
+    iconCategory: 'literary',
   },
   {
     id: 'marx',
@@ -202,6 +221,7 @@ export const PHILOSOPHERS: Philosopher[] = [
     textColor: 'text-red-600',
     bio: 'A German philosopher, economist, historian, sociologist, political theorist, journalist and socialist revolutionary. His best-known titles are the 1848 pamphlet The Communist Manifesto and the three-volume Das Kapital. His political and philosophical thought had an enormous influence on subsequent intellectual, economic and political history.',
     majorWorks: ['Das Kapital', 'The Communist Manifesto (with Friedrich Engels)', 'Economic and Philosophic Manuscripts of 1844'],
+    iconCategory: 'critical_theory',
   },
   {
     id: 'foucault',
@@ -212,6 +232,7 @@ export const PHILOSOPHERS: Philosopher[] = [
     textColor: 'text-violet-500',
     bio: 'A French philosopher, historian of ideas, social theorist, and literary critic. Foucault\'s theories primarily address the relationship between power and knowledge, and how they are used as a form of social control through societal institutions.',
     majorWorks: ['Discipline and Punish: The Birth of the Prison', 'The History of Sexuality', 'The Order of Things'],
+    iconCategory: 'critical_theory',
   },
   {
     id: 'arendt',
@@ -222,6 +243,7 @@ export const PHILOSOPHERS: Philosopher[] = [
     textColor: 'text-stone-500',
     bio: 'A German-born American political theorist. Her works deal with the nature of power and the subjects of politics, direct democracy, authority, and totalitarianism. She is widely considered one of the most important political thinkers of the 20th century.',
     majorWorks: ['The Origins of Totalitarianism', 'The Human Condition', 'Eichmann in Jerusalem: A Report on the Banality of Evil'],
+    iconCategory: 'political',
   },
   {
     id: 'laozi',
@@ -232,6 +254,7 @@ export const PHILOSOPHERS: Philosopher[] = [
     textColor: 'text-emerald-500',
     bio: 'An ancient Chinese philosopher and writer. He is the reputed author of the Tao Te Ching, the founder of philosophical Taoism, and a deity in religious Taoism and traditional Chinese religions. A semi-legendary figure, he is usually dated to around the 6th century BCE.',
     majorWorks: ['Tao Te Ching'],
+    iconCategory: 'eastern',
   },
   {
     id: 'avicenna',
@@ -242,6 +265,7 @@ export const PHILOSOPHERS: Philosopher[] = [
     textColor: 'text-sky-600',
     bio: 'A Persian polymath who is regarded as one of the most significant physicians, astronomers, thinkers and writers of the Islamic Golden Age, and the father of early modern medicine. His most famous works are The Book of Healing, a philosophical and scientific encyclopedia, and The Canon of Medicine, a medical encyclopedia which became a standard medical text at many medieval universities.',
     majorWorks: ['The Canon of Medicine', 'The Book of Healing'],
+    iconCategory: 'rationalism',
   },
   {
     id: 'spinoza',
@@ -252,6 +276,7 @@ export const PHILOSOPHERS: Philosopher[] = [
     textColor: 'text-blue-500',
     bio: 'A Dutch philosopher of Portuguese Sephardi origin. One of the early thinkers of the Enlightenment and modern biblical criticism, including modern conceptions of the self and the universe, he came to be considered one of the great rationalists of 17th-century philosophy.',
     majorWorks: ['Ethics, Demonstrated in Geometrical Order', 'Theological-Political Treatise'],
+    iconCategory: 'rationalism',
   },
   {
     id: 'mill',
@@ -262,6 +287,7 @@ export const PHILOSOPHERS: Philosopher[] = [
     textColor: 'text-indigo-400',
     bio: 'An English philosopher, political economist, and civil servant. One of the most influential thinkers in the history of classical liberalism, he contributed widely to social theory, political theory, and political economy.',
     majorWorks: ['On Liberty', 'Utilitarianism', 'The Subjection of Women', 'A System of Logic'],
+    iconCategory: 'political',
   },
   {
     id: 'hobbes',
@@ -272,6 +298,7 @@ export const PHILOSOPHERS: Philosopher[] = [
     textColor: 'text-neutral-500',
     bio: 'An English philosopher, considered to be one of the founders of modern political philosophy. Hobbes is best known for his 1651 book Leviathan, which expounds an influential formulation of social contract theory.',
     majorWorks: ['Leviathan', 'De Cive', 'The Elements of Law'],
+    iconCategory: 'political',
   },
   {
     id: 'voltaire',
@@ -282,6 +309,7 @@ export const PHILOSOPHERS: Philosopher[] = [
     textColor: 'text-amber-500',
     bio: 'A French Enlightenment writer, historian, and philosopher famous for his wit, his criticism of Christianity—especially the Roman Catholic Church—as well as his advocacy of freedom of speech, freedom of religion, and separation of church and state.',
     majorWorks: ['Candide', 'Letters on England', 'Treatise on Tolerance'],
+    iconCategory: 'rationalism',
   },
   {
     id: 'wittgenstein',
@@ -292,5 +320,6 @@ export const PHILOSOPHERS: Philosopher[] = [
     textColor: 'text-cyan-600',
     bio: 'An Austrian-British philosopher who worked primarily in logic, the philosophy of mathematics, the philosophy of mind, and the philosophy of language. He is considered by some to be the greatest philosopher of the 20th century.',
     majorWorks: ['Tractatus Logico-Philosophicus', 'Philosophical Investigations'],
+    iconCategory: 'rationalism',
   },
 ];

@@ -3,6 +3,7 @@ import { ChatTarget, Philosopher } from '../types';
 import { PHILOSOPHERS } from '../constants';
 import { ThemeToggle } from './ThemeToggle';
 import { PlusIcon, UserGroupIcon, CloseIcon, CheckIcon } from './icons';
+import { PhilosopherIcon } from './PhilosopherIcon';
 
 interface HomeScreenProps {
   onSelectChat: (target: ChatTarget) => void;
@@ -45,7 +46,9 @@ const CreateDebateModal: React.FC<{
                             const isSelected = selected.includes(p.id);
                             return (
                                 <div key={p.id} onClick={() => togglePhilosopher(p.id)} className={`relative cursor-pointer p-3 rounded-lg text-center transition-all duration-200 ${isSelected ? 'bg-indigo-500/30 ring-2 ring-indigo-500' : 'bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700'}`}>
-                                    <img src={p.avatarUrl} alt={p.name} className={`w-20 h-20 rounded-full mx-auto mb-2 border-4 transition-all ${isSelected ? 'border-indigo-500' : 'border-transparent'}`} />
+                                    <div className={`mx-auto mb-2 transition-all ${isSelected ? 'scale-105' : ''}`}>
+                                        <PhilosopherIcon philosopher={p} size="w-20 h-20" />
+                                    </div>
                                     <h3 className="font-semibold text-sm">{p.name}</h3>
                                     {isSelected && (
                                         <div className="absolute top-2 right-2 w-6 h-6 bg-indigo-600 rounded-full flex items-center justify-center text-white">
@@ -79,7 +82,7 @@ const PersonaCard: React.FC<{ philosopher: Philosopher; onClick: () => void; }> 
     >
         <div className={`absolute -bottom-10 -right-10 w-28 h-28 ${philosopher.color} rounded-full opacity-30 group-hover:opacity-60 transition-all duration-500 blur-lg`}></div>
         <div className="relative z-10 flex items-center space-x-4">
-            <img src={philosopher.avatarUrl} alt={philosopher.name} className="w-16 h-16 rounded-full border-2 border-white/50" />
+            <PhilosopherIcon philosopher={philosopher} size="w-16 h-16" />
             <div>
                 <h3 className="font-serif text-xl font-bold text-gray-800 dark:text-white">{philosopher.name}</h3>
                 <p className="text-sm text-gray-600 dark:text-gray-300">Chat one-on-one</p>
@@ -97,7 +100,7 @@ const GroupCard: React.FC<{ group: ChatTarget; onClick: () => void; }> = ({ grou
         <div className="relative z-10">
             <div className="flex -space-x-4">
                 {group.members.slice(0, 4).map(p => (
-                    <img key={p.id} src={p.avatarUrl} alt={p.name} className="w-12 h-12 rounded-full border-2 border-white/50" />
+                   <PhilosopherIcon key={p.id} philosopher={p} size="w-12 h-12" withBorder={true} />
                 ))}
             </div>
              <div className="mt-4">

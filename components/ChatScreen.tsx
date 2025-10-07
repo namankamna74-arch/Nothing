@@ -8,6 +8,7 @@ import { useSound } from '../hooks/useSound';
 import { SendIcon, MenuIcon, CloseIcon, BackIcon, StopIcon, Cog6ToothIcon, SpeakerWaveIcon, ClipboardIcon, CheckIcon, ArrowsPointingInIcon, ArrowsPointingOutIcon, UserCircleIcon, InformationCircleIcon, BookOpenIcon, ArrowPathIcon } from './icons';
 import { FormattedText } from './FormattedText';
 import { AppContext, AppContextType } from '../App';
+import { PhilosopherIcon } from './PhilosopherIcon';
 
 // Philosopher Info Modal
 const PhilosopherInfoModal: React.FC<{ philosopher: Philosopher; onClose: () => void; }> = ({ philosopher, onClose }) => {
@@ -313,7 +314,7 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({ isOpen, onToggle, onSelectCha
                                     onClick={(e) => { e.preventDefault(); handleSelect(p); }}
                                     className={`flex items-center space-x-3 p-3 rounded-lg transition-colors duration-200 ${currentChatId === p.id ? 'bg-indigo-500/20 text-indigo-700 dark:text-indigo-300' : 'hover:bg-gray-200 dark:hover:bg-gray-700'}`}
                                 >
-                                    <img src={p.avatarUrl} alt={p.name} className="w-10 h-10 rounded-full" />
+                                    <PhilosopherIcon philosopher={p} size="w-10 h-10" />
                                     <span className="font-medium">{p.name}</span>
                                 </a>
                             </li>
@@ -340,7 +341,7 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message, philosopher, act
     return (
         <div className={`flex items-end gap-3 my-4 animate-fade-in ${isUser ? 'justify-end' : 'justify-start'}`}>
             {!isUser && philosopher && (
-                <img src={philosopher.avatarUrl} alt={philosopher.name} className="w-10 h-10 rounded-full self-start object-cover" />
+                <PhilosopherIcon philosopher={philosopher} size="w-10 h-10" />
             )}
             <div className={`relative group max-w-lg lg:max-w-2xl px-5 py-3 rounded-2xl shadow-md ${isUser 
                 ? 'bg-indigo-600 text-white rounded-br-none' 
@@ -654,20 +655,20 @@ export const ChatScreen: React.FC<ChatScreenProps> = ({ chatTarget, onGoBack, on
                         </button>
                         {chatTarget.type === 'persona' ? (
                             <button onClick={() => setInfoModalPhilosopher(chatTarget.members[0])} className="transition-transform duration-200 hover:scale-110">
-                                <img src={chatTarget.avatarUrl} alt={chatTarget.name} className="w-10 h-10 rounded-full object-cover" />
+                                <PhilosopherIcon philosopher={chatTarget.members[0]} size="w-10 h-10" />
                             </button>
                         ) : (
                             <div className="relative">
                                  <button onClick={() => setIsMemberListOpen(prev => !prev)} className="flex -space-x-2 transition-transform duration-200 hover:scale-110">
                                      {chatTarget.members.slice(0,3).map(p => (
-                                         <img key={p.id} src={p.avatarUrl} alt={p.name} className="w-10 h-10 object-cover rounded-full border-2 border-white dark:border-gray-800" />
+                                         <PhilosopherIcon key={p.id} philosopher={p} size="w-10 h-10" withBorder={true} />
                                      ))}
                                  </button>
                                  {isMemberListOpen && (
                                     <div className="absolute top-12 left-0 z-50 w-64 bg-white/90 dark:bg-gray-900/90 backdrop-blur-lg rounded-xl shadow-2xl animate-fade-in py-2">
                                         {chatTarget.members.map(p => (
                                             <div key={p.id} onClick={() => { setInfoModalPhilosopher(p); setIsMemberListOpen(false); }} className="flex items-center space-x-3 px-4 py-2 hover:bg-gray-200 dark:hover:bg-gray-700 cursor-pointer">
-                                                <img src={p.avatarUrl} alt={p.name} className="w-8 h-8 rounded-full object-cover" />
+                                                <PhilosopherIcon philosopher={p} size="w-8 h-8" />
                                                 <span className="font-medium text-sm">{p.name}</span>
                                             </div>
                                         ))}

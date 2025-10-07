@@ -4,6 +4,8 @@ export enum Theme {
   Dark = 'dark',
 }
 
+export type PhilosopherIconCategory = 'ancient' | 'rationalism' | 'empiricism' | 'existentialism' | 'stoicism' | 'political' | 'eastern' | 'critical_theory' | 'literary';
+
 export interface Philosopher {
   id: string;
   name: string;
@@ -13,6 +15,7 @@ export interface Philosopher {
   textColor: string;
   bio: string;
   majorWorks: string[];
+  iconCategory: PhilosopherIconCategory;
 }
 
 export interface Message {
