@@ -4,6 +4,8 @@ export enum Theme {
   Dark = 'dark',
 }
 
+export type View = 'home' | 'history' | 'profile';
+
 export type PhilosopherIconCategory = 'ancient' | 'rationalism' | 'empiricism' | 'existentialism' | 'stoicism' | 'political' | 'eastern' | 'critical_theory' | 'literary';
 
 export interface Philosopher {
@@ -31,6 +33,14 @@ export interface ChatTarget {
   name: string;
   members: Philosopher[];
   avatarUrl?: string;
+}
+
+export interface ChatSession {
+  id: string;
+  title: string;
+  chatTarget: ChatTarget;
+  messages: Message[];
+  createdAt: number;
 }
 
 export interface Settings {

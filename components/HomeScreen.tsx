@@ -2,11 +2,11 @@ import React, { useState } from 'react';
 import { ChatTarget, Philosopher } from '../types';
 import { PHILOSOPHERS } from '../constants';
 import { ThemeToggle } from './ThemeToggle';
-import { PlusIcon, UserGroupIcon, CloseIcon, CheckIcon } from './icons';
+import { CloseIcon, CheckIcon, UserGroupIcon } from './icons';
 import { PhilosopherIcon } from './PhilosopherIcon';
 
 interface HomeScreenProps {
-  onSelectChat: (target: ChatTarget) => void;
+  onStartChat: (target: ChatTarget) => void;
 }
 
 const CreateDebateModal: React.FC<{
@@ -26,13 +26,14 @@ const CreateDebateModal: React.FC<{
         const selectedPhilosophers = PHILOSOPHERS.filter(p => selected.includes(p.id));
         onStartDebate(selectedPhilosophers);
         onClose();
+        setSelected([]);
     };
 
     if (!isOpen) return null;
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm animate-fade-in" onClick={onClose}>
-            <div className="bg-white/80 dark:bg-gray-900/80 rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden" onClick={e => e.stopPropagation()}>
+            <div className="bg-white/80 dark:bg-gray-900/80 rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden m-4" onClick={e => e.stopPropagation()}>
                 <header className="p-6 flex justify-between items-center border-b border-gray-300 dark:border-gray-700">
                     <h2 className="font-serif text-3xl font-bold">Create a Debate</h2>
                     <button onClick={onClose} className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700">
@@ -126,7 +127,7 @@ const CreateDebateCard: React.FC<{ onClick: () => void; }> = ({ onClick }) => (
 );
 
 
-export const HomeScreen: React.FC<HomeScreenProps> = ({ onSelectChat }) => {
+export const HomeScreen: React.FC<HomeScreenProps> = ({ onStartChat }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     
     const debateGroup: ChatTarget = {
@@ -137,7 +138,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onSelectChat }) => {
     };
 
     const handleSelectPersona = (philosopher: Philosopher) => {
-        onSelectChat({
+        onStartChat({
             id: philosopher.id,
             type: 'persona',
             name: philosopher.name,
@@ -147,11 +148,11 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onSelectChat }) => {
     };
 
     const handleSelectGroup = (group: ChatTarget) => {
-        onSelectChat(group);
+        onStartChat(group);
     };
     
     const handleStartCustomDebate = (philosophers: Philosopher[]) => {
-        onSelectChat({
+        onStartChat({
             id: `custom-${Date.now()}`,
             type: 'group',
             name: 'Custom Debate',
@@ -162,10 +163,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onSelectChat }) => {
   return (
     <>
     <CreateDebateModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} onStartDebate={handleStartCustomDebate} />
-    <div className="min-h-screen w-full bg-gradient-to-br from-gray-200 via-gray-100 to-white dark:from-gray-900 dark:via-black dark:to-gray-800 text-gray-900 dark:text-gray-100 p-4 sm:p-8 animate-fade-in">
-      <div className="absolute top-6 right-6 z-20">
-        <ThemeToggle />
-      </div>
+    <div className="min-h-full w-full bg-transparent text-gray-900 dark:text-gray-100 p-4 sm:p-8 animate-fade-in">
+
       <div className="max-w-6xl mx-auto">
         <header className="text-center my-12">
             <h1 className="font-serif text-5xl sm:text-7xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-gray-800 to-gray-500 dark:from-white dark:to-gray-400 pb-2">

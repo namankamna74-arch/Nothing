@@ -164,6 +164,27 @@ export async function generateUserPersona(): Promise<UserPersona> {
     }
 }
 
+export async function generateChatTitle(messages: Message[]): Promise<string> {
+    const aiInstance = getAI();
+    const conversationSnippet = messages.slice(0, 3).map(m => `${m.sender}: ${m.text}`).join('\n');
+    const prompt = `Based on the following conversation snippet, create a very short, concise title (4-5 words max). The title should capture the main topic.
+
+    Snippet:
+    ---
+    ${conversationSnippet}
+    ---
+    
+    Title:`;
+
+    const result = await aiInstance.models.generateContent({
+        model: 'gemini-2.5-flash',
+        contents: prompt,
+    });
+
+    return result.text.trim().replace(/"/g, ''); // Clean up response
+}
+
+
 export async function generateContext(
   history: Message[],
   philosophers: Philosopher[]

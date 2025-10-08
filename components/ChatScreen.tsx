@@ -1,11 +1,11 @@
 
 import React, { useState, useEffect, useRef, useCallback, useContext } from 'react';
-import { ChatTarget, Message, Philosopher, Settings, UserPersona, ChatContext } from '../types';
+import { ChatTarget, Message, Philosopher, Settings, UserPersona, ChatContext, ChatSession } from '../types';
 import { PHILOSOPHERS, MESSAGE_SOUND_URL } from '../constants';
-import { streamPersonaResponse, streamGroupDebate, regenerateResponse, generateUserPersona, generateContext } from '../services/geminiService';
+import { streamPersonaResponse, streamGroupDebate, regenerateResponse, generateUserPersona, generateContext, generateChatTitle } from '../services/geminiService';
 import { getVoices, getVoiceForPhilosopher } from '../services/voiceService';
 import { useSound } from '../hooks/useSound';
-import { SendIcon, MenuIcon, CloseIcon, BackIcon, StopIcon, Cog6ToothIcon, SpeakerWaveIcon, ClipboardIcon, CheckIcon, ArrowsPointingInIcon, ArrowsPointingOutIcon, UserCircleIcon, InformationCircleIcon, BookOpenIcon, ArrowPathIcon } from './icons';
+import { SendIcon, BackIcon, StopIcon, SpeakerWaveIcon, ClipboardIcon, CheckIcon, ArrowsPointingInIcon, ArrowsPointingOutIcon, InformationCircleIcon, BookOpenIcon, ArrowPathIcon, CloseIcon } from './icons';
 import { FormattedText } from './FormattedText';
 import { AppContext, AppContextType } from '../App';
 import { PhilosopherIcon } from './PhilosopherIcon';
@@ -26,7 +26,9 @@ const PhilosopherInfoModal: React.FC<{ philosopher: Philosopher; onClose: () => 
                 </header>
                 <div className="p-6 space-y-6 overflow-y-auto">
                     <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
-                        <img src={philosopher.avatarUrl} alt={philosopher.name} className="w-32 h-32 rounded-full object-cover shadow-lg border-4 border-white/50" />
+                        <div className="flex-shrink-0">
+                           <PhilosopherIcon philosopher={philosopher} size="w-32 h-32" withBorder={true} />
+                        </div>
                         <p className="text-gray-700 dark:text-gray-300 text-center sm:text-left">{philosopher.bio}</p>
                     </div>
                     <div>
@@ -43,149 +45,16 @@ const PhilosopherInfoModal: React.FC<{ philosopher: Philosopher; onClose: () => 
     );
 };
 
-
-// User Persona Modal Component
-const UserPersonaModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ isOpen, onClose }) => {
-    const { userPersona, setUserPersona } = useContext(AppContext) as AppContextType;
-    const [localPersona, setLocalPersona] = useState<UserPersona>(userPersona);
-    const [isGenerating, setIsGenerating] = useState(false);
-
-    useEffect(() => {
-        setLocalPersona(userPersona);
-    }, [userPersona, isOpen]);
-
-    const handleGenerate = async () => {
-        setIsGenerating(true);
-        try {
-            const persona = await generateUserPersona();
-            setLocalPersona(persona);
-        } catch (error) {
-            console.error("Error generating persona", error);
-            // Optionally show an error message to the user
-        } finally {
-            setIsGenerating(false);
-        }
-    };
-    
-    const handleSave = () => {
-        setUserPersona(localPersona);
-        onClose();
-    };
-    
-    if (!isOpen) return null;
-
-    return (
-         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm animate-fade-in" onClick={onClose}>
-            <div className="bg-white/80 dark:bg-gray-900/80 rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] flex flex-col overflow-hidden" onClick={e => e.stopPropagation()}>
-                <header className="p-4 flex justify-between items-center border-b border-gray-300 dark:border-gray-700">
-                    <h2 className="font-serif text-2xl font-bold">Define Your Persona</h2>
-                    <button onClick={onClose} className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700">
-                        <CloseIcon className="w-6 h-6"/>
-                    </button>
-                </header>
-                <div className="p-6 space-y-4 overflow-y-auto">
-                    <div>
-                        <label className="block font-medium mb-1 text-sm">Your Name / Role</label>
-                        <input type="text" value={localPersona.name} onChange={e => setLocalPersona(p => ({...p, name: e.target.value}))} className="w-full p-2 rounded-md bg-gray-200 dark:bg-gray-700 border-transparent focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="e.g., A curious student" />
-                    </div>
-                     <div>
-                        <label className="block font-medium mb-1 text-sm">Relationship to Philosopher(s)</label>
-                        <input type="text" value={localPersona.relationship} onChange={e => setLocalPersona(p => ({...p, relationship: e.target.value}))} className="w-full p-2 rounded-md bg-gray-200 dark:bg-gray-700 border-transparent focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="e.g., I am your challenger" />
-                    </div>
-                     <div>
-                        <label className="block font-medium mb-1 text-sm">Your Backstory</label>
-                        <textarea value={localPersona.backstory} onChange={e => setLocalPersona(p => ({...p, backstory: e.target.value}))} className="w-full p-2 rounded-md bg-gray-200 dark:bg-gray-700 border-transparent focus:outline-none focus:ring-2 focus:ring-indigo-500 h-24 resize-none" placeholder="e.g., I come from a future where..." />
-                    </div>
-                    <button onClick={handleGenerate} disabled={isGenerating} className="w-full py-2 px-4 border border-indigo-500 text-indigo-500 font-semibold rounded-lg hover:bg-indigo-500/10 transition-colors disabled:opacity-50">
-                        {isGenerating ? 'Generating...' : '✨ Generate with AI'}
-                    </button>
-                </div>
-                 <footer className="p-4 border-t border-gray-300 dark:border-gray-700 mt-auto">
-                    <button onClick={handleSave} className="w-full py-3 px-6 bg-indigo-600 text-white font-bold rounded-lg shadow-lg transition-all hover:bg-indigo-700">
-                        Save Persona
-                    </button>
-                </footer>
-            </div>
-        </div>
-    );
-};
-
-
-// Settings Panel Component
-const SettingsPanel: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ isOpen, onClose }) => {
-    const { settings, setSettings } = useContext(AppContext) as AppContextType;
-
-    const handleSettingChange = <K extends keyof Settings>(key: K, value: Settings[K]) => {
-        setSettings(prev => ({ ...prev, [key]: value }));
-    };
-    
-    // Word limit in words, converted to tokens for the API
-    const wordLimits = [35, 70, 150, 300, 500];
-    const currentWordLimit = settings.maxOutputTokens ? Math.round(settings.maxOutputTokens * 0.7) : 0;
-
-    if (!isOpen) return null;
-
-    return (
-        <div className="absolute top-16 right-4 z-50 w-80 bg-white/80 dark:bg-gray-900/80 backdrop-blur-lg rounded-2xl shadow-2xl animate-fade-in" onClick={e => e.stopPropagation()}>
-            <div className="p-4 border-b border-gray-300 dark:border-gray-700">
-                <h3 className="font-serif text-lg font-bold">Chat Settings</h3>
-            </div>
-            <div className="p-4 space-y-6">
-                <div>
-                    <label className="block font-medium mb-2">Creativity (Temperature)</label>
-                    <div className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
-                        <span>Precise</span>
-                        <input
-                            type="range"
-                            min="0"
-                            max="1"
-                            step="0.1"
-                            value={settings.temperature}
-                            onChange={(e) => handleSettingChange('temperature', parseFloat(e.target.value))}
-                            className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"
-                        />
-                        <span>Creative</span>
-                    </div>
-                </div>
-                 <div>
-                    <label className="block font-medium mb-2">Response Length (~{currentWordLimit || 'Default'} words)</label>
-                    <select
-                        value={settings.maxOutputTokens || ''}
-                        onChange={(e) => handleSettingChange('maxOutputTokens', e.target.value ? parseInt(e.target.value) : undefined)}
-                        className="w-full p-2 rounded-md bg-gray-200 dark:bg-gray-700 border-transparent focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                    >
-                        <option value="">Default</option>
-                        {wordLimits.map(words => {
-                            const tokens = Math.round(words / 0.7);
-                            return <option key={tokens} value={tokens}>~{words} words</option>
-                        })}
-                    </select>
-                </div>
-                <div>
-                    <label className="flex items-center justify-between font-medium cursor-pointer">
-                        <span>Allow Debate Interruption</span>
-                        <div className="relative">
-                            <input type="checkbox" className="sr-only peer" checked={settings.allowDebateInterruption} onChange={(e) => handleSettingChange('allowDebateInterruption', e.target.checked)} />
-                            <div className="w-11 h-6 bg-gray-200 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-indigo-600"></div>
-                        </div>
-                    </label>
-                </div>
-            </div>
-        </div>
-    );
-};
-
 // Message Actions (Copy, Hear, etc.)
 const MessageActions: React.FC<{
     message: Message;
-    philosopher: Philosopher;
     onHear: (message: Message) => void;
     onCopy: (text: string) => void;
     onRegenerate: (message: Message, mode: 'shorten' | 'lengthen') => void;
     isSpeaking: boolean;
     isCopied: boolean;
     isLoading: boolean;
-}> = ({ message, philosopher, onHear, onCopy, onRegenerate, isSpeaking, isCopied, isLoading }) => {
+}> = ({ message, onHear, onCopy, onRegenerate, isSpeaking, isCopied, isLoading }) => {
     return (
         <div className="absolute -top-4 right-0 flex items-center space-x-1 px-2 py-1 bg-white/60 dark:bg-gray-900/60 backdrop-blur-sm rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-opacity duration-200">
             <button onClick={() => onHear(message)} disabled={isLoading} className={`p-1.5 rounded-full hover:bg-gray-300 dark:hover:bg-gray-600 disabled:opacity-50 ${isSpeaking ? 'text-indigo-500' : ''}`}>
@@ -275,58 +144,6 @@ const ContextPanel: React.FC<{
     );
 };
 
-
-// ChatScreen component and its children
-interface ChatSidebarProps {
-    isOpen: boolean;
-    onToggle: () => void;
-    onSelectChat: (target: ChatTarget) => void;
-    currentChatId: string;
-}
-
-const ChatSidebar: React.FC<ChatSidebarProps> = ({ isOpen, onToggle, onSelectChat, currentChatId }) => {
-    const handleSelect = (philosopher: Philosopher) => {
-        onSelectChat({
-            id: philosopher.id,
-            type: 'persona',
-            name: philosopher.name,
-            members: [philosopher],
-            avatarUrl: philosopher.avatarUrl
-        });
-        onToggle();
-    }
-
-    return (
-        <>
-            <div className={`fixed top-0 left-0 h-full z-40 bg-gray-100/80 dark:bg-black/80 backdrop-blur-md w-72 shadow-2xl transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-                <div className="p-4 flex justify-between items-center border-b border-gray-300 dark:border-gray-700">
-                    <h2 className="font-serif text-xl font-bold">Conversations</h2>
-                    <button onClick={onToggle} className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700">
-                        <CloseIcon className="w-6 h-6"/>
-                    </button>
-                </div>
-                <nav className="p-2 overflow-y-auto h-[calc(100vh-65px)]">
-                    <ul>
-                        {PHILOSOPHERS.map(p => (
-                            <li key={p.id}>
-                                <a
-                                    href="#"
-                                    onClick={(e) => { e.preventDefault(); handleSelect(p); }}
-                                    className={`flex items-center space-x-3 p-3 rounded-lg transition-colors duration-200 ${currentChatId === p.id ? 'bg-indigo-500/20 text-indigo-700 dark:text-indigo-300' : 'hover:bg-gray-200 dark:hover:bg-gray-700'}`}
-                                >
-                                    <PhilosopherIcon philosopher={p} size="w-10 h-10" />
-                                    <span className="font-medium">{p.name}</span>
-                                </a>
-                            </li>
-                        ))}
-                    </ul>
-                </nav>
-            </div>
-            {isOpen && <div onClick={onToggle} className="fixed inset-0 bg-black/50 z-30 transition-opacity duration-300"></div>}
-        </>
-    );
-};
-
 interface MessageBubbleProps {
     message: Message;
     philosopher?: Philosopher;
@@ -362,18 +179,15 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message, philosopher, act
 
 
 interface ChatScreenProps {
-  chatTarget: ChatTarget;
+  session: ChatSession;
   onGoBack: () => void;
-  onSelectChat: (target: ChatTarget) => void;
+  updateSession: (sessionId: string, updates: Partial<ChatSession>) => void;
 }
 
-export const ChatScreen: React.FC<ChatScreenProps> = ({ chatTarget, onGoBack, onSelectChat }) => {
-    const [messages, setMessages] = useState<Message[]>([]);
+export const ChatScreen: React.FC<ChatScreenProps> = ({ session, onGoBack, updateSession }) => {
+    const [messages, setMessages] = useState<Message[]>(session.messages);
     const [input, setInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
-    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-    const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-    const [isPersonaModalOpen, setIsPersonaModalOpen] = useState(false);
     const [infoModalPhilosopher, setInfoModalPhilosopher] = useState<Philosopher | null>(null);
     const [isMemberListOpen, setIsMemberListOpen] = useState(false);
     const [speakingMessageId, setSpeakingMessageId] = useState<string | null>(null);
@@ -388,6 +202,8 @@ export const ChatScreen: React.FC<ChatScreenProps> = ({ chatTarget, onGoBack, on
     const chatContainerRef = useRef<HTMLDivElement>(null);
     const philosopherMap = useRef(new Map(PHILOSOPHERS.map(p => [p.id, p])));
     const stopGeneration = useRef(false);
+    const isTitleGenerated = useRef(session.title !== `New Chat with ${session.chatTarget.name}`);
+
 
     // Refs for smooth streaming animation
     const animationQueue = useRef<Record<string, { queue: string[], isDone: boolean }>>({});
@@ -396,6 +212,18 @@ export const ChatScreen: React.FC<ChatScreenProps> = ({ chatTarget, onGoBack, on
     useEffect(() => {
         getVoices().then(setVoices);
     }, []);
+    
+    // Sync messages from session prop
+    useEffect(() => {
+      setMessages(session.messages);
+    }, [session.messages]);
+    
+    // Persist messages whenever they change
+    useEffect(() => {
+        if(messages.length > session.messages.length) {
+          updateSession(session.id, { messages });
+        }
+    }, [messages, session.id, session.messages.length, updateSession]);
 
     const scrollToBottom = useCallback(() => {
         if (chatContainerRef.current) {
@@ -414,15 +242,14 @@ export const ChatScreen: React.FC<ChatScreenProps> = ({ chatTarget, onGoBack, on
         }
         setIsContextLoading(true);
         try {
-            const context = await generateContext(messages, chatTarget.members);
+            const context = await generateContext(messages, session.chatTarget.members);
             setContextData(context);
         } catch (error) {
             console.error("Error generating context:", error);
-            // In a real app, you might set an error state to show in the UI
         } finally {
             setIsContextLoading(false);
         }
-    }, [messages, chatTarget.members]);
+    }, [messages, session.chatTarget.members]);
 
     useEffect(() => {
         if (isContextPanelOpen && !contextData && messages.length > 1) {
@@ -455,8 +282,23 @@ export const ChatScreen: React.FC<ChatScreenProps> = ({ chatTarget, onGoBack, on
                 );
     
                 if (finishedId) {
-                    setMessages(prev => prev.map(m => m.id === finishedId ? { ...m, text: m.text.replace('▋', '') } : m));
+                  let finalMessageText = '';
+                    setMessages(prev => prev.map(m => {
+                      if (m.id === finishedId) {
+                        finalMessageText = m.text.replace('▋', '');
+                        return { ...m, text: finalMessageText };
+                      }
+                      return m;
+                    }));
                     delete animationQueue.current[finishedId];
+
+                    // Auto-generate title after first AI response
+                    if (!isTitleGenerated.current && messages.length >= 2) {
+                        isTitleGenerated.current = true;
+                        generateChatTitle(messages).then(title => {
+                           if (title) updateSession(session.id, { title });
+                        });
+                    }
                 }
             }
     
@@ -469,7 +311,7 @@ export const ChatScreen: React.FC<ChatScreenProps> = ({ chatTarget, onGoBack, on
             }
         };
         animate();
-    }, []);
+    }, [messages, session.id, updateSession]);
 
     const runStream = async (stream: AsyncGenerator<any>, onChunk: (chunk: any) => void) => {
         for await (const chunk of stream) {
@@ -493,8 +335,8 @@ export const ChatScreen: React.FC<ChatScreenProps> = ({ chatTarget, onGoBack, on
         stopGeneration.current = false;
 
         try {
-            if (chatTarget.type === 'persona') {
-                const persona = chatTarget.members[0];
+            if (session.chatTarget.type === 'persona') {
+                const persona = session.chatTarget.members[0];
                 const messageId = `${persona.id}-${Date.now()}`;
                 setMessages(prev => [...prev, { id: messageId, text: '', sender: persona.id, timestamp: Date.now() }]);
                 animationQueue.current[messageId] = { queue: [], isDone: false };
@@ -514,7 +356,7 @@ export const ChatScreen: React.FC<ChatScreenProps> = ({ chatTarget, onGoBack, on
 
             } else { // Group chat
                 let firstDebateChunk = true;
-                const stream = streamGroupDebate(chatTarget.members, [...messages, userMessage], userMessage.text, settings, userPersona);
+                const stream = streamGroupDebate(session.chatTarget.members, [...messages, userMessage], userMessage.text, settings, userPersona);
 
                 await runStream(stream, ({ philosopherId, chunk }) => {
                     let messageId = Object.keys(animationQueue.current).find(id => id.startsWith(`group-${philosopherId}`) && !animationQueue.current[id].isDone);
@@ -540,7 +382,7 @@ export const ChatScreen: React.FC<ChatScreenProps> = ({ chatTarget, onGoBack, on
         } catch (error) {
             console.error("Error generating content:", error);
             const errorId = `error-${Date.now()}`;
-            setMessages(prev => [...prev, { id: errorId, text: 'An error occurred. Please try again.', sender: chatTarget.id, timestamp: Date.now() }]);
+            setMessages(prev => [...prev, { id: errorId, text: 'An error occurred. Please try again.', sender: session.chatTarget.id, timestamp: Date.now() }]);
         } finally {
             if (!stopGeneration.current) {
                 setIsLoading(false);
@@ -552,7 +394,7 @@ export const ChatScreen: React.FC<ChatScreenProps> = ({ chatTarget, onGoBack, on
         e?.preventDefault();
         if (!input.trim()) return;
 
-        if (isLoading && chatTarget.type === 'group' && settings.allowDebateInterruption) {
+        if (isLoading && session.chatTarget.type === 'group' && settings.allowDebateInterruption) {
             handleStopGeneration();
         } else if (isLoading) {
             return;
@@ -562,7 +404,6 @@ export const ChatScreen: React.FC<ChatScreenProps> = ({ chatTarget, onGoBack, on
         setMessages(prev => [...prev, userMessage]);
         setInput('');
         
-        // Use a timeout to ensure state update before starting generation, especially after an interruption
         setTimeout(() => handleMessageGeneration(userMessage), 50);
     };
 
@@ -625,48 +466,34 @@ export const ChatScreen: React.FC<ChatScreenProps> = ({ chatTarget, onGoBack, on
         setCopiedMessageId(messageId);
         setTimeout(() => setCopiedMessageId(null), 2000);
     };
-
     
-    useEffect(() => {
-        setMessages([]);
-        animationQueue.current = {};
-        isAnimating.current = false;
-        setContextData(null); // Reset context on chat change
-        handleStopGeneration();
-    }, [chatTarget.id]);
-
-    const canInterrupt = settings.allowDebateInterruption && chatTarget.type === 'group';
+    const canInterrupt = settings.allowDebateInterruption && session.chatTarget.type === 'group';
     const isInputDisabled = isLoading && !canInterrupt;
     
     return (
-        <div className="flex h-screen w-screen bg-gray-200 dark:bg-gray-800 font-sans animate-fade-in">
+        <div className="flex h-full w-full bg-gray-200 dark:bg-gray-800 font-sans animate-fade-in">
             {infoModalPhilosopher && <PhilosopherInfoModal philosopher={infoModalPhilosopher} onClose={() => setInfoModalPhilosopher(null)} />}
-            <ChatSidebar isOpen={isSidebarOpen} onToggle={() => setIsSidebarOpen(false)} onSelectChat={onSelectChat} currentChatId={chatTarget.id} />
-            <UserPersonaModal isOpen={isPersonaModalOpen} onClose={() => setIsPersonaModalOpen(false)} />
             <div className="flex flex-1 min-w-0">
                 <div className="flex flex-col flex-1 h-full min-w-0">
                     {/* Header */}
-                    <header className="flex items-center p-3 sm:p-4 bg-white/70 dark:bg-black/50 backdrop-blur-md shadow-md z-20">
-                        <button onClick={() => setIsSidebarOpen(true)} className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 mr-2 lg:hidden">
-                            <MenuIcon className="w-6 h-6"/>
-                        </button>
-                         <button onClick={onGoBack} className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 mr-2 hidden lg:block">
+                    <header className="flex items-center p-3 sm:p-4 bg-white/70 dark:bg-black/50 backdrop-blur-md shadow-md z-20 flex-shrink-0">
+                         <button onClick={onGoBack} className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 mr-2">
                             <BackIcon className="w-6 h-6"/>
                         </button>
-                        {chatTarget.type === 'persona' ? (
-                            <button onClick={() => setInfoModalPhilosopher(chatTarget.members[0])} className="transition-transform duration-200 hover:scale-110">
-                                <PhilosopherIcon philosopher={chatTarget.members[0]} size="w-10 h-10" />
+                        {session.chatTarget.type === 'persona' ? (
+                            <button onClick={() => setInfoModalPhilosopher(session.chatTarget.members[0])} className="transition-transform duration-200 hover:scale-110">
+                                <PhilosopherIcon philosopher={session.chatTarget.members[0]} size="w-10 h-10" />
                             </button>
                         ) : (
                             <div className="relative">
                                  <button onClick={() => setIsMemberListOpen(prev => !prev)} className="flex -space-x-2 transition-transform duration-200 hover:scale-110">
-                                     {chatTarget.members.slice(0,3).map(p => (
+                                     {session.chatTarget.members.slice(0,3).map(p => (
                                          <PhilosopherIcon key={p.id} philosopher={p} size="w-10 h-10" withBorder={true} />
                                      ))}
                                  </button>
                                  {isMemberListOpen && (
                                     <div className="absolute top-12 left-0 z-50 w-64 bg-white/90 dark:bg-gray-900/90 backdrop-blur-lg rounded-xl shadow-2xl animate-fade-in py-2">
-                                        {chatTarget.members.map(p => (
+                                        {session.chatTarget.members.map(p => (
                                             <div key={p.id} onClick={() => { setInfoModalPhilosopher(p); setIsMemberListOpen(false); }} className="flex items-center space-x-3 px-4 py-2 hover:bg-gray-200 dark:hover:bg-gray-700 cursor-pointer">
                                                 <PhilosopherIcon philosopher={p} size="w-8 h-8" />
                                                 <span className="font-medium text-sm">{p.name}</span>
@@ -676,31 +503,21 @@ export const ChatScreen: React.FC<ChatScreenProps> = ({ chatTarget, onGoBack, on
                                  )}
                              </div>
                         )}
-                        <h2 className="text-xl font-bold ml-4 text-gray-800 dark:text-gray-100">{chatTarget.name}</h2>
+                        <h2 className="text-xl font-bold ml-4 text-gray-800 dark:text-gray-100 truncate">{session.title}</h2>
                         <div className="ml-auto flex items-center space-x-2">
                             <button onClick={() => setIsContextPanelOpen(prev => !prev)} className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 hidden lg:block">
                                 <BookOpenIcon className="w-6 h-6"/>
                             </button>
-                            <button onClick={() => setIsPersonaModalOpen(true)} className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700">
-                                <UserCircleIcon className="w-6 h-6"/>
-                            </button>
-                            <div className="relative">
-                                <button onClick={() => setIsSettingsOpen(prev => !prev)} className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700">
-                                    <Cog6ToothIcon className="w-6 h-6"/>
-                                </button>
-                                <SettingsPanel isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} />
-                            </div>
                         </div>
                     </header>
 
                     {/* Chat Area */}
-                    <main ref={chatContainerRef} className="flex-1 overflow-y-auto p-4 sm:p-6 bg-gradient-to-br from-gray-200 via-gray-100 to-white dark:from-gray-900 dark:via-black dark:to-gray-800" onClick={() => {if (isSettingsOpen) setIsSettingsOpen(false); if(isMemberListOpen) setIsMemberListOpen(false)}}>
+                    <main ref={chatContainerRef} className="flex-1 overflow-y-auto p-4 sm:p-6 bg-gradient-to-br from-gray-200 via-gray-100 to-white dark:from-gray-900 dark:via-black dark:to-gray-800" onClick={() => {if(isMemberListOpen) setIsMemberListOpen(false)}}>
                         {messages.map(msg => (
                             <MessageBubble key={msg.id} message={msg} philosopher={philosopherMap.current.get(msg.sender)} actions={
                                 msg.sender !== 'user' ? (
                                     <MessageActions
                                         message={msg}
-                                        philosopher={philosopherMap.current.get(msg.sender)!}
                                         onHear={handleHearAloud}
                                         onCopy={handleCopy}
                                         onRegenerate={handleRegenerate}
@@ -723,7 +540,7 @@ export const ChatScreen: React.FC<ChatScreenProps> = ({ chatTarget, onGoBack, on
                     </main>
 
                     {/* Input Form */}
-                    <footer className="p-3 sm:p-4 bg-white/70 dark:bg-black/50 backdrop-blur-md">
+                    <footer className="p-3 sm:p-4 bg-white/70 dark:bg-black/50 backdrop-blur-md flex-shrink-0">
                         <form onSubmit={handleSubmit} className="flex items-center space-x-3 max-w-4xl mx-auto">
                             <input
                                 type="text"
